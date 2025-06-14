@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const mockInventory = [
   {
@@ -19,6 +20,7 @@ const mockInventory = [
 
 export default function Inventory() {
   const [items, setItems] = useState(mockInventory);
+  const navigate = useNavigate();
 
   const markUsed = (id: string) => {
     setItems(
@@ -30,8 +32,9 @@ export default function Inventory() {
     setItems(items.filter((item) => item.id !== id));
   };
 
-  const listForSale = (id: string) => {
-    alert("Redirecting to marketplace listing...");
+  const listForSale = (item: any) => {
+    localStorage.setItem("itemToSell", JSON.stringify(item));
+    navigate("/marketplace");
   };
 
   return (
@@ -68,7 +71,7 @@ export default function Inventory() {
                     Mark as Used
                   </button>
                   <button
-                    onClick={() => listForSale(item.id)}
+                    onClick={() => listForSale(item)}
                     className="text-xs bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
                   >
                     Sell

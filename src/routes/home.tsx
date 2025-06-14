@@ -1,241 +1,206 @@
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
-import { Camera, LayoutDashboard, Leaf, Users, Box } from "lucide-react";
+import {
+  Camera,
+  Video,
+  Store,
+  Boxes,
+  Sparkles,
+  LayoutDashboard,
+  Wand2,
+  HelpCircle,
+} from "lucide-react";
 
 const features = [
   {
-    icon: <Camera className="w-6 h-6 text-blue-600" />,
-    title: "Scan & Style",
+    icon: Sparkles,
+    title: "What is ReDécorAI?",
     description:
-      "Use your phone camera or upload to scan your room. AI tags furniture and suggests stylish redesigns.",
+      "ReDécorAI is your AI-powered interior companion. Just scan your room — and instantly get intelligent redesigns using what you already own.",
   },
   {
-    icon: <LayoutDashboard className="w-6 h-6 text-green-600" />,
-    title: "Personalized Redesign",
+    icon: LayoutDashboard,
+    title: "Smart Suggestions",
     description:
-      "AI suggests layouts and decor tailored to your space and taste — even budget options.",
+      "AI analyzes layout, lighting, and color — and suggests intelligent, style-matching improvements for your space.",
   },
   {
-    icon: <Leaf className="w-6 h-6 text-emerald-600" />,
-    title: "Sustainability First",
-    description:
-      "Reduce waste and cost by reusing furniture and shopping second-hand with AI recommendations.",
-  },
-  {
-    icon: <Users className="w-6 h-6 text-violet-600" />,
-    title: "AR & Community",
-    description:
-      "Try AR previews, join challenges, and share room makeovers with others.",
-  },
-  {
-    icon: <LayoutDashboard className="w-6 h-6 text-orange-500" />,
+    icon: Store,
     title: "Marketplace",
     description:
-      "Discover furniture and decor items — new, used, and sustainable — matched to your needs.",
+      "Sell and buy decor items directly from other users. Everything you see in your design is shoppable.",
   },
   {
-    icon: <Box className="w-6 h-6 text-teal-500" />,
-    title: "My Inventory",
+    icon: Boxes,
+    title: "Inventory",
     description:
-      "Keep track of your existing furniture and let ReDécorAI optimize your layout around it.",
+      "Each scanned room adds items to your inventory. Reuse them in future designs, track ownership, and organize effortlessly.",
+  },
+  {
+    icon: Wand2,
+    title: "Effortless Design",
+    description:
+      "Redecorating should be fun. We combine AI with intuitive design tools to make styling your room simple and personal.",
+  },
+  {
+    icon: HelpCircle,
+    title: "Tutorial & Demo",
+    description:
+      "Interactive walkthroughs and demo mode let you explore the app before committing to a full scan.",
   },
 ];
 
-function FeatureCard({
-  icon,
-  title,
-  description,
-}: {
-  icon: JSX.Element;
-  title: string;
-  description: string;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
-      className="bg-white/80 p-6 rounded-xl shadow"
-    >
-      <div className="mb-3">{icon}</div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-sm text-gray-700">{description}</p>
-    </motion.div>
-  );
-}
-
 export default function Home() {
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem("user") !== null;
-  const [showTutorial, setShowTutorial] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
-    const seenTutorial = localStorage.getItem("seenTutorial");
-    if (!seenTutorial) {
-      setShowTutorial(true);
-      localStorage.setItem("seenTutorial", "true");
-    }
+    document.documentElement.classList.toggle("dark", isDark);
+  }, [isDark]);
+
+  const handleInventoryClick = () => {
+    const isLoggedIn = localStorage.getItem("user") === "true";
     if (isLoggedIn) {
-      const timeout = setTimeout(() => navigate("/scan"), 5000);
-      return () => clearTimeout(timeout);
+      navigate("/inventory");
+    } else {
+      setShowLogin(true);
     }
-  }, [isLoggedIn, navigate]);
+  };
 
   return (
-    <div className="relative h-screen w-full overflow-auto bg-black text-white">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-      >
-        <source src="/55555room454797888010777885200.mov" type="video/mp4" />
-      </video>
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-0" />
+    <div className="h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth">
+      {/* Section 1 - Hero */}
+      <section className="relative snap-start h-screen flex items-center justify-center text-white">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        >
+          <source src="/55555room454797888010777885200.mov" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/50 z-10" />
 
-      <motion.div
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 flex flex-col items-center justify-center h-screen px-6 text-center"
-      >
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">
-          Welcome to ReDécorAI
-        </h1>
-        <p className="mb-6 text-lg max-w-2xl text-white/90">
-          Redesign your space with AI — smart, sustainable, and beautiful.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <Button asChild>
-            <Link to="/scan">
-              {isLoggedIn ? "Start Scanning" : "Scan Your Room"}
-            </Link>
-          </Button>
-          <Button variant="secondary" asChild>
-            <Link to="/marketplace">Browse Marketplace</Link>
-          </Button>
-          <Button variant="destructive" asChild>
-            <Link to="/inventory">My Inventory</Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link to="/profile">Profile</Link>
-          </Button>
-          <Dialog open={showTutorial} onOpenChange={setShowTutorial}>
-            <DialogTrigger asChild>
-              <Button variant="ghost">📖 How to Use / Try Demo</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>How to Use ReDécorAI</DialogTitle>
-                <DialogDescription>Step-by-step guide</DialogDescription>
-              </DialogHeader>
-              <ul className="space-y-3 pt-4 text-sm text-gray-700">
-                <li>
-                  📷 <strong>Scan:</strong> Use your camera or upload a room
-                  image
-                </li>
-                <li>
-                  🧠 <strong>AI Tags:</strong> Furniture and layout detected
-                  automatically
-                </li>
-                <li>
-                  🎨 <strong>Redesign:</strong> Suggestions tailored to your
-                  taste
-                </li>
-                <li>
-                  🛍️ <strong>Shop or Reuse:</strong> AI suggests reuse or eco
-                  buys
-                </li>
-                <li>
-                  📲 <strong>Preview:</strong> See changes in AR
-                </li>
-              </ul>
-              <div className="mt-4">
-                <video
-                  controls
-                  className="rounded-lg w-full shadow"
-                  poster="/tutorial-thumbnail.jpg"
-                >
-                  <source src="/tutorial.mp4" type="video/mp4" />
-                  Your browser does not support video playback.
-                </video>
-              </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="relative z-20 text-center px-6"
+        >
+          <h1 className="text-5xl font-bold mb-4">ReDécorAI</h1>
+          <p className="text-xl max-w-xl mx-auto mb-8">
+            Scan. Style. Shop. Your AI home designer.
+          </p>
 
-              <p className="pt-6 text-center text-sm">
-                Or{" "}
-                <Link to="/demo" className="underline">
-                  try the live demo
-                </Link>
-                .
-              </p>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
+            <button
+              onClick={() => navigate("/scan")}
+              className="bg-white text-black px-6 py-3 rounded-xl shadow-md flex items-center justify-center gap-2"
+            >
+              <Camera size={18} /> Scan Your Room
+            </button>
+            <button
+              onClick={() => navigate("/tutorial")}
+              className="bg-white text-black px-6 py-3 rounded-xl shadow-md flex items-center justify-center gap-2"
+            >
+              <Video size={18} /> Watch Tutorial
+            </button>
+            <button
+              onClick={() => navigate("/marketplace")}
+              className="bg-white text-black px-6 py-3 rounded-xl shadow-md flex items-center justify-center gap-2"
+            >
+              <Store size={18} /> Marketplace
+            </button>
+            <button
+              onClick={handleInventoryClick}
+              className="bg-white text-black px-6 py-3 rounded-xl shadow-md flex items-center justify-center gap-2"
+            >
+              <Boxes size={18} /> Inventory
+            </button>
+          </div>
+        </motion.div>
+      </section>
 
-      <motion.div
-        className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 text-white text-3xl animate-bounce cursor-pointer"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        onClick={() => {
-          document
-            .getElementById("features")
-            ?.scrollIntoView({ behavior: "smooth" });
-        }}
-      >
-        ⬇
-      </motion.div>
+      {/* Section 2 - Features */}
+      <section className="snap-start bg-white dark:bg-zinc-900 text-black dark:text-white px-6 py-24">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Explore Features
+          </h2>
 
-      <section
-        id="features"
-        className="relative z-10 px-6 py-16 bg-white text-gray-900"
-      >
-        <div className="max-w-6xl mx-auto text-center mb-12">
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold mb-4"
-          >
-            What is ReDécorAI?
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="text-lg text-gray-700 max-w-3xl mx-auto"
-          >
-            ReDécorAI helps you scan, restyle, and redesign your room using AI —
-            reuse what you own, save money, and choose sustainable solutions.
-          </motion.p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, idx) => (
-            <FeatureCard
-              key={idx}
-              icon={feature.icon}
-              title={feature.title}
-              description={feature.description}
-            />
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feat, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-lg flex flex-col items-start"
+              >
+                <feat.icon
+                  size={28}
+                  className="mb-4 text-blue-600 dark:text-blue-400"
+                />
+                <h3 className="text-xl font-semibold mb-2">{feat.title}</h3>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  {feat.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
+
+      {/* Login Modal */}
+      {showLogin && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-6 w-96 relative">
+            <h2 className="text-xl font-semibold mb-4 text-center">Login</h2>
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full mb-3 px-4 py-2 rounded border"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full mb-3 px-4 py-2 rounded border"
+            />
+            <button
+              className="bg-blue-600 text-white w-full py-2 rounded mt-2"
+              onClick={() => {
+                localStorage.setItem("user", "true");
+                setShowLogin(false);
+                navigate("/inventory");
+              }}
+            >
+              Login
+            </button>
+            <p className="text-sm text-center mt-4">
+              Don’t have an account?{" "}
+              <span
+                className="text-blue-600 cursor-pointer"
+                onClick={() => {
+                  setShowLogin(false);
+                  navigate("/signup");
+                }}
+              >
+                Sign up
+              </span>
+            </p>
+            <button
+              className="absolute top-2 right-2 text-gray-600"
+              onClick={() => setShowLogin(false)}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

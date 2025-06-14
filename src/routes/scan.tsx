@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Scan() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -6,6 +7,7 @@ export default function Scan() {
   const [streaming, setStreaming] = useState(false);
   const [imageData, setImageData] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
+  const navigate = useNavigate();
 
   const startCamera = async () => {
     try {
@@ -67,18 +69,19 @@ export default function Scan() {
   const startScan = () => {
     setScanning(true);
     setTimeout(() => {
-      alert("Scan complete (placeholder)");
       setScanning(false);
+      navigate("/scan-result", {
+        state: { image: imageData },
+      });
     }, 2000);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-gray-50 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-[#fefdfb] text-center">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800">
         Scan Your Room
       </h2>
 
-      {/* Image area */}
       <div
         className="relative w-full max-w-md h-64 border border-dashed rounded-md bg-white flex items-center justify-center overflow-hidden"
         onDrop={onDrop}
@@ -107,7 +110,6 @@ export default function Scan() {
         <canvas ref={canvasRef} style={{ display: "none" }} />
       </div>
 
-      {/* Action buttons */}
       {!imageData ? (
         <div className="mt-4 flex flex-wrap justify-center gap-3">
           <button
