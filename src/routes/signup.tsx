@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios"; // ✅ Added for backend API call
 import PageWrapper from "../components/PageWrapper";
 
 export default function Signup() {
@@ -6,9 +7,21 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // ✅ Connected to backend /api/register
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signing up:", { username, email, password });
+    try {
+      const res = await axios.post("http://localhost:5000/api/register", {
+        username,
+        email,
+        password,
+      });
+      console.log("✅ Registered:", res.data);
+      alert(res.data.message); // Success popup
+    } catch (err: any) {
+      console.error("❌ Register failed:", err.response?.data || err.message);
+      alert(err.response?.data?.error || "Registration failed");
+    }
   };
 
   return (

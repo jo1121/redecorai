@@ -1,3 +1,4 @@
+import UploadRoomImage from './UploadRoomImage';
 import { useState } from "react";
 import {
   createBrowserRouter,

@@ -1,8 +1,25 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // ✅ Backend connection
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:5000/api/login", {
+        email,
+        password,
+      });
+      console.log("✅ Login successful:", res.data);
+      alert(res.data.message); // Show success
+    } catch (err: any) {
+      console.error("❌ Login failed:", err.response?.data || err.message);
+      alert(err.response?.data?.error || "Login failed");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-gray-50">
@@ -10,7 +27,8 @@ export default function Login() {
         <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">
           Login
         </h2>
-        <form className="space-y-4">
+        {/* ✅ Hooked the form to handleSubmit */}
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="email"
