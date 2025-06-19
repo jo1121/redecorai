@@ -22,6 +22,8 @@ import Login from "./routes/login";
 import Signup from "./routes/signup";
 import About from "./routes/about";
 import Dashboard from "./routes/Dashboard";
+import Tutorial from "./routes/Tutorial";
+import ScanResult from "./routes/ScanResult";
 
 function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -183,6 +185,8 @@ const router = createBrowserRouter([
       { path: "signup", element: <Signup /> },
       { path: "about", element: <About /> },
       { path: "dashboard", element: <Dashboard /> },
+      { path: "tutorial", element: <Tutorial /> },
+      { path: "scan-result", element: <ScanResult /> },
     ],
   },
 ]);
