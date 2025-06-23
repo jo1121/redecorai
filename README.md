@@ -153,6 +153,3 @@ AR preview mode
 
 
 ---
-
-Would you like me to create and place this file automatically in your repo now?
-
