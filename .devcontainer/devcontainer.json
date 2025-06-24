@@ -1,13 +1,11 @@
-// .devcontainer/devcontainer.json
 {
   "name": "ReDécorAI Codespace",
   "dockerComposeFile": ["../docker-compose.yml"],
-  "service": "frontend", // where your VS Code terminal lands
-  "workspaceFolder": "/workspaces/redecorai", // adjust to your repo path
-  "runServices": ["frontend", "backend"],
-  "forwardPorts": [5173, 8000],
+  "service": "frontend",
+  "runServices": ["frontend", "backend", "mongo"],
+  "forwardPorts": [3000, 3001, 27017],
   "shutdownAction": "stopCompose",
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "npm install --prefix frontend",
   "extensions": [
     "ms-azuretools.vscode-docker",
     "esbenp.prettier-vscode",

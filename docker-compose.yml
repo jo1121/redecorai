@@ -1,19 +1,20 @@
-version: '3.8'
-
+version: "3.8"
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     depends_on:
       - backend
-
-  backend:
-    build: ./backend
-    ports:
-      - "3001:3001"
-    depends_on:
-      - mongo
 
   mongo:
     image: mongo
@@ -24,5 +25,3 @@ services:
 
 volumes:
   mongo-data:
-
-
