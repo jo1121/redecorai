@@ -1,31 +1,13 @@
 // .devcontainer/devcontainer.json
 {
   "name": "ReDécorAI Codespace",
-
-  // use your existing docker-compose.yml at the repo root
   "dockerComposeFile": ["../docker-compose.yml"],
-
-  // the service whose container you want your first terminal in
-  "service": "frontend",
-
-  // don’t hard-code a workspaceFolder—let Codespaces default to your repo mount
-  // "workspaceFolder": "/workspaces/…",
-
-  // expose your dev ports
+  "service": "frontend", // where your VS Code terminal lands
+  "workspaceFolder": "/workspaces/redecorai", // adjust to your repo path
+  "runServices": ["frontend", "backend"],
   "forwardPorts": [5173, 8000],
-
-  // shut down the compose stack when Codespace stops
   "shutdownAction": "stopCompose",
-
-  // after container build, install npm deps
   "postCreateCommand": "npm install",
-
-  // editor settings you like in your container
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
-  },
-
-  // recommend helpful extensions
   "extensions": [
     "ms-azuretools.vscode-docker",
     "esbenp.prettier-vscode",
