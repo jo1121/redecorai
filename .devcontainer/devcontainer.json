@@ -6,7 +6,7 @@
   "forwardPorts": [3000,3001,27017],
   "shutdownAction": "stopCompose",
   "postCreateCommand": "npm install --prefix src",
-+  "postStartCommand": "npm run dev --prefix src -- --host 0.0.0.0",
+  "postStartCommand": "npm run dev --prefix src -- --host 0.0.0.0",
   "extensions": [
     "ms-azuretools.vscode-docker",
     "esbenp.prettier-vscode",
