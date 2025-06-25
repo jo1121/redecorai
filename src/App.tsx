@@ -1,31 +1,10 @@
-import UploadRoomImage from './UploadRoomImage';
 import { useState } from "react";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Outlet,
-  Link,
-  useLocation,
-} from "react-router-dom";
-import "./index.css";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import PageWrapper from "./components/PageWrapper";
-import Layout from "./components/Layout"; // ✅ Import layout with video
 
-import Home from "./routes/home";
-import Scan from "./routes/scan";
-import Marketplace from "./routes/marketplace";
-import Inventory from "./routes/inventory";
-import Profile from "./routes/profile";
-import Suggestions from "./routes/suggestions";
-import Login from "./routes/login";
-import Signup from "./routes/signup";
-import About from "./routes/about";
-import Dashboard from "./routes/Dashboard";
-import Tutorial from "./routes/Tutorial";
-import ScanResult from "./routes/ScanResult";
-
-function AppLayout() {
+// This is your layout with header, menu, and footer
+export default function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -97,65 +76,21 @@ function AppLayout() {
               </button>
             </div>
             <nav className="flex flex-col px-4 py-2 text-sm">
-              <Link
-                to="/dashboard"
-                onClick={closeMenu}
-                className="py-2 hover:text-blue-600"
-              >
-                Dashboard
-              </Link>
-              <Link
-                to="/profile"
-                onClick={closeMenu}
-                className="py-2 hover:text-blue-600"
-              >
-                Settings
-              </Link>
-              <Link
-                to="/faq"
-                onClick={closeMenu}
-                className="py-2 hover:text-blue-600"
-              >
-                FAQ
-              </Link>
-              <Link
-                to="/about"
-                onClick={closeMenu}
-                className="py-2 hover:text-blue-600"
-              >
-                About Us
-              </Link>
-              <button className="py-2 text-left hover:text-blue-600">
-                Logout
-              </button>
+              <Link to="/dashboard" onClick={closeMenu} className="py-2 hover:text-blue-600">Dashboard</Link>
+              <Link to="/profile" onClick={closeMenu} className="py-2 hover:text-blue-600">Settings</Link>
+              <Link to="/faq" onClick={closeMenu} className="py-2 hover:text-blue-600">FAQ</Link>
+              <Link to="/about" onClick={closeMenu} className="py-2 hover:text-blue-600">About Us</Link>
+              <button className="py-2 text-left hover:text-blue-600">Logout</button>
               <hr className="my-2" />
-              <Link
-                to="/login"
-                onClick={closeMenu}
-                className="py-2 hover:text-blue-600"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                onClick={closeMenu}
-                className="py-2 hover:text-blue-600"
-              >
-                Signup
-              </Link>
+              <Link to="/login" onClick={closeMenu} className="py-2 hover:text-blue-600">Login</Link>
+              <Link to="/signup" onClick={closeMenu} className="py-2 hover:text-blue-600">Signup</Link>
             </nav>
           </div>
         </>
       )}
 
       <main className="flex-grow">
-        {isHome ? (
-          <Outlet />
-        ) : (
-          <PageWrapper>
-            <Outlet />
-          </PageWrapper>
-        )}
+        {isHome ? <Outlet /> : <PageWrapper><Outlet /></PageWrapper>}
       </main>
 
       <footer className="bg-gray-100/80 text-center py-4 text-xs text-gray-700 backdrop-blur-md">
@@ -165,32 +100,3 @@ function AppLayout() {
   );
 }
 
-// ✅ Router definition using Layout with background video
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <Layout>
-        <AppLayout />
-      </Layout>
-    ),
-    children: [
-      { index: true, element: <Home /> },
-      { path: "scan", element: <Scan /> },
-      { path: "marketplace", element: <Marketplace /> },
-      { path: "inventory", element: <Inventory /> },
-      { path: "profile", element: <Profile /> },
-      { path: "suggestions", element: <Suggestions /> },
-      { path: "login", element: <Login /> },
-      { path: "signup", element: <Signup /> },
-      { path: "about", element: <About /> },
-      { path: "dashboard", element: <Dashboard /> },
-      { path: "tutorial", element: <Tutorial /> },
-      { path: "scan-result", element: <ScanResult /> },
-    ],
-  },
-]);
-
-export default function App() {
-  return <RouterProvider router={router} />;
-}
