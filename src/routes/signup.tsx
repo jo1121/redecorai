@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import axios from "axios"; // ✅ Added for backend API call
+import axios from "axios";
 import PageWrapper from "../components/PageWrapper";
-
+import { GoogleLogin } from "@react-oauth/google";
 export default function Signup() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // ✅ Connected to backend /api/register
+  // ✅ Manual Sign Up Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -17,10 +17,24 @@ export default function Signup() {
         password,
       });
       console.log("✅ Registered:", res.data);
-      alert(res.data.message); // Success popup
+      alert(res.data.message);
     } catch (err: any) {
       console.error("❌ Register failed:", err.response?.data || err.message);
       alert(err.response?.data?.error || "Registration failed");
+    }
+  };
+
+  // ✅ Google Sign Up
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    console.log("Google Signup:", credentialResponse);
+    try {
+      const res = await axios.post("http://localhost:5000/api/google-signup", {
+        token: credentialResponse.credential,
+      });
+      alert(res.data.message || "Google sign-up success");
+    } catch (err: any) {
+      console.error("Google sign-up failed:", err.response?.data || err.message);
+      alert("Google sign-up failed");
     }
   };
 
@@ -28,15 +42,17 @@ export default function Signup() {
     <PageWrapper>
       <h2 className="text-xl font-semibold mb-4">Sign Up</h2>
       <div className="space-y-4">
-        <button className="w-full border py-2 rounded hover:bg-gray-100 bg-white text-black">
-          Continue with Google
-        </button>
+        <div className="w-full flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => alert("Google sign-up failed")}
+          />
+        </div>
         <button className="w-full border py-2 rounded hover:bg-gray-100 bg-white text-black">
           Continue with Facebook
         </button>
-        <div className="text-center text-sm text-gray-500">
-          or sign up with email
-        </div>
+        <div className="text-center text-sm text-gray-500">or sign up with email</div>
+
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium mb-1">Username</label>
