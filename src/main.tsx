@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./index.css";
 
 import Layout from "./components/Layout";
@@ -27,7 +28,7 @@ const RootLayout = () => (
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />, // 🔄 Wrapped JSX component
+    element: <RootLayout />,
     children: [
       { index: true, element: <Home /> },
       { path: "scan", element: <Scan /> },
@@ -47,6 +48,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <GoogleOAuthProvider clientId="590880356078-3aa0c2po8kkatp67j5c84v1hq5c5gb2f.apps.googleusercontent.com">
+      <RouterProvider router={router} />
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
