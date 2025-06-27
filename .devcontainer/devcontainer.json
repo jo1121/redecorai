@@ -1,15 +1,17 @@
+// .devcontainer/devcontainer.json
 {
   "name": "ReDécorAI Codespace",
-  "dockerComposeFile": ["../docker-compose.yml"],
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../.devcontainer/docker-compose.codespaces.yml"
+  ],
   "service": "frontend",
-  "runServices": ["frontend", "backend", "mongo"],
-  "forwardPorts": [3000, 3001, 27017],
-  "shutdownAction": "stopCompose",
-  "postCreateCommand": "npm install --prefix src",
-  "postStartCommand": "npm run dev --prefix src -- --host 0.0.0.0",
+  "workspaceFolder": "/workspaces/redecorai",
+  "postCreateCommand": "npm install",
+  "forwardPorts": [5173, 5000, 27017],
   "extensions": [
     "ms-azuretools.vscode-docker",
-    "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
   ]
 }
