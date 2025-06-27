@@ -1,11 +1,13 @@
+// src/main.tsx
+
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
-import Layout from "./components/Layout";
-import AppLayout from "./App";
+import Layout from "./components/Layout"; // your video-background layout
+import AppLayout from "./App"; // your header/sidebar + <Outlet/>
 import Home from "./routes/home";
 import Scan from "./routes/scan";
 import Marketplace from "./routes/marketplace";
@@ -19,6 +21,16 @@ import Dashboard from "./routes/Dashboard";
 import Tutorial from "./routes/Tutorial";
 import ScanResult from "./routes/ScanResult";
 
+// Pull your client ID from environment
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+if (!googleClientId) {
+  console.error(
+    "❌ Missing VITE_GOOGLE_CLIENT_ID in .env.local – " +
+      "be sure to restart your dev server after adding it!"
+  );
+}
+
+// Wrap AppLayout in your global Layout (e.g. the video BG)
 const RootLayout = () => (
   <Layout>
     <AppLayout />
@@ -48,7 +60,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId="590880356078-3aa0c2po8kkatp67j5c84v1hq5c5gb2f.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={googleClientId!}>
       <RouterProvider router={router} />
     </GoogleOAuthProvider>
   </React.StrictMode>

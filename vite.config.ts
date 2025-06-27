@@ -1,3 +1,4 @@
+// vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
@@ -14,7 +15,19 @@ export default defineConfig({
     },
   },
   server: {
-    host: true,
-    allowedHosts: [".ngrok-free.app"], // ✅ allow ngrok
+    host: true, // listen on all interfaces (for ngrok)
+    allowedHosts: [".ngrok-free.app"],
+
+    // proxy any /api/* requests to your backend
+    proxy: {
+      "/api": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
+        secure: false,
+        // optional: if your backend mounts routes at /api,
+        // you can leave rewrite out; otherwise you can strip the /api prefix:
+        // rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
 });
