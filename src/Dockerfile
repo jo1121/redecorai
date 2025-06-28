@@ -1,14 +1,20 @@
-# frontend/Dockerfile
-
 FROM node:18-alpine
 
-WORKDIR /app
+# Install git for any git-based dependencies
+RUN apk add --no-cache git
 
-COPY package.json package-lock.json ./
-RUN npm ci
+# Create app directory
+WORKDIR /workspaces/redecorai
 
-COPY . .
+# Create a non-root user for vscode
+RUN addgroup -g 1000 vscode && \
+    adduser -D -s /bin/sh -u 1000 -G vscode vscode
 
+# Switch to vscode user
+USER vscode
+
+# Expose the port that Vite uses
 EXPOSE 5173
 
-CMD ["npm", "run", "dev"]
+# Keep container running
+CMD ["tail", "-f", "/dev/null"]
