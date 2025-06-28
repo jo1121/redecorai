@@ -1,35 +1,24 @@
 version: "3.8"
-
 services:
   mongo:
     image: mongo:6
-    restart: always
+    ports: ["27017:27017"]
     volumes:
       - mongo-data:/data/db
-    ports:
-      - "27017:27017"
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    restart: always
-    environment:
-      - MONGO_URI=${MONGO_URI} # ensure you export this in your host or .env
-    ports:
-      - "5000:5000"
+    ports: ["5000:5000"]
     depends_on:
       - mongo
 
   frontend:
     build:
-      context: ./src
-      dockerfile: Dockerfile # point to your existing frontend Dockerfile
-    restart: always
-    environment:
-      - VITE_BACKEND_URL=http://localhost:5000
-    ports:
-      - "5173:5173"
+      context: ./src # ← points at your React app
+      dockerfile: Dockerfile
+    ports: ["5173:5173"]
     depends_on:
       - backend
 
