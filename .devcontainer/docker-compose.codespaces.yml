@@ -1,6 +1,33 @@
-# .devcontainer/docker-compose.codespaces.yml
 version: "3.8"
 services:
   frontend:
-    environment:
-      - CODESPACES=true
+    build:
+      context: ./src # ← your React/Vite code lives in src/
+      dockerfile: Dockerfile # ← make sure src/Dockerfile exists
+    volumes:
+      - ..:/workspace # mount the repo root into /workspace
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile # ← make sure backend/Dockerfile exists
+    volumes:
+      - ../backend:/workspace/backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:6
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  mongo-data:
