@@ -1,20 +1,18 @@
+# 1. Base image
 FROM node:18-alpine
 
-# Install git for any git-based dependencies
-RUN apk add --no-cache git
+# 2. Create app directory
+WORKDIR /app
 
-# Create app directory
-WORKDIR /workspaces/redecorai
+# 3. Install dependencies
+COPY package.json package-lock.json ./
+RUN npm ci --only=production
 
-# Create a non-root user for vscode
-RUN addgroup -g 1000 vscode && \
-    adduser -D -s /bin/sh -u 1000 -G vscode vscode
+# 4. Copy source
+COPY . .
 
-# Switch to vscode user
-USER vscode
-
-# Expose the port that your backend uses
+# 5. Expose the port your Express server listens on
 EXPOSE 5000
 
-# Keep container running
-CMD ["tail", "-f", "/dev/null"]
+# 6. Run the app
+CMD ["npm", "start"]
