@@ -1,28 +1,11 @@
-// .devcontainer/devcontainer.json
 {
   "name": "ReDécorAI Codespace",
-
-  // 1) Point at your single docker‐compose.yml
   "dockerComposeFile": ["../docker-compose.yml"],
-
-  // 2) Bring up these services
   "runServices": ["mongo", "backend", "frontend"],
-
-  // 3) Attach VS Code’s terminal into the "frontend" container
   "service": "frontend",
-
-  // 4) When you exit/rebuild, stop the compose stack
   "shutdownAction": "stopCompose",
-
-  // 5) After the containers are up, install deps in both projects
   "postCreateCommand": "npm install --prefix backend && npm install --prefix src",
-
-  // 6) Forward your ports to the host
   "forwardPorts": [27017, 5000, 5173],
-
-  // 7) Mount your repo into /workspaces/redecorai
   "workspaceFolder": "/workspaces/redecorai",
-
-  // 8) Use the built-in "vscode" user
   "remoteUser": "vscode"
 }
