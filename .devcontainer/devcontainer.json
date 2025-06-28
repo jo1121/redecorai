@@ -1,11 +1,31 @@
 {
+  // Give your codespace a friendly name
   "name": "ReDécorAI Codespace",
-  "dockerComposeFile": ["../docker-compose.yml"],
+
+  // Point at your compose files
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    ".devcontainer/docker-compose.codespaces.yml"
+  ],
+
+  // Bring up all three services...
   "runServices": ["mongo", "backend", "frontend"],
+
+  // …but attach your VS Code terminal to the frontend container:
   "service": "frontend",
+
+  // Stop them when you close the codespace
   "shutdownAction": "stopCompose",
+
+  // After the containers are created, install deps:
   "postCreateCommand": "npm install --prefix backend && npm install --prefix src",
+
+  // Map the ports you care about
   "forwardPorts": [27017, 5000, 5173],
+
+  // This must match where your code lives inside the container:
   "workspaceFolder": "/workspaces/redecorai",
+
+  // Run as the vscode user so you have a normal shell
   "remoteUser": "vscode"
 }
