@@ -2,25 +2,27 @@ version: "3.8"
 services:
   frontend:
     build:
-      context: ./src # ← your React/Vite code lives in src/
-      dockerfile: Dockerfile # ← make sure src/Dockerfile exists
+      context: ../src # Correct path from .devcontainer to src
+      dockerfile: Dockerfile
     volumes:
-      - ..:/workspace # mount the repo root into /workspace
+      - ..:/workspaces/redecorai # Mount to match workspaceFolder
     ports:
       - "5173:5173"
     depends_on:
       - backend
+    working_dir: /workspaces/redecorai/src
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile # ← make sure backend/Dockerfile exists
+      context: ../backend # Correct path from .devcontainer to backend
+      dockerfile: Dockerfile
     volumes:
-      - ../backend:/workspace/backend
+      - ..:/workspaces/redecorai # Mount to match workspaceFolder
     ports:
       - "5000:5000"
     depends_on:
       - mongo
+    working_dir: /workspaces/redecorai/backend
 
   mongo:
     image: mongo:6
