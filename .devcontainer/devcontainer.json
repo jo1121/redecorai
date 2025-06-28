@@ -1,32 +1,24 @@
 {
   "name": "ReDécorAI Codespace",
 
-  // Paths are relative to this file (in `.devcontainer/`)
-  "dockerComposeFile": [
-    // 1. the project‐root compose
-    "../docker-compose.yml",
-    // 2. your override for Codespaces
-    "docker-compose.codespaces.yml"
-  ],
+  // Use only the main docker-compose.yml
+  "dockerComposeFile": "../docker-compose.yml",
 
-  // spin up all services...
-  "runServices": ["mongo", "backend", "frontend"],
-
-  // ...but attach VS Code to the `frontend` service
+  // Attach VS Code to the frontend service
   "service": "frontend",
 
   // When you close, shut them down
   "shutdownAction": "stopCompose",
 
-  // after container is ready, install deps
+  // After container is ready, install deps
   "postCreateCommand": "npm install --prefix backend && npm install --prefix src",
 
-  // expose ports you use
+  // Expose ports you use
   "forwardPorts": [27017, 5000, 5173],
 
-  // match exactly where your code lives inside the container
+  // Match exactly where your code lives inside the container
   "workspaceFolder": "/workspaces/redecorai",
 
-  // run as the normal vscode user
+  // Run as the normal vscode user
   "remoteUser": "vscode"
 }
