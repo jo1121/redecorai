@@ -1,12 +1,27 @@
 {
   "name": "ReDécorAI Codespace",
-  "dockerComposeFile": [
-    "../docker-compose.yml",
-    "docker-compose.codespaces.yml"
-  ],
+  // 1) Tell the Codespace to use our compose file
+  "dockerComposeFile": ["../docker-compose.yml"],
+
+  // 2) Which service should VS Code “attach” to?  We want the frontend container—
+  //    it has Node/Vite installed, so we get a proper shell with `npm run dev`.
   "service": "frontend",
-  "workspaceFolder": "/workspace",
-  "postCreateCommand": "npm install && cd backend && npm install",
-  "forwardPorts": [5173, 5000, 27017],
-  "extensions": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
+
+  // 3) Make sure those other services spin up too:
+  "runServices": ["mongo", "backend", "frontend"],
+
+  // 4) When you do “Rebuild Container”, stop all compose services on exit
+  "shutdownAction": "stopCompose",
+
+  // 5) Once the container is up, install deps:
+  "postCreateCommand": "npm install --prefix backend && npm install",
+
+  // 6) Expose these ports in the port forwarding panel:
+  "forwardPorts": [27017, 5000, 5173],
+
+  // 7) Where your code lives inside the container:
+  "workspaceFolder": "/workspaces/redecorai",
+
+  // 8) Run as the built‐in vscode user:
+  "remoteUser": "vscode"
 }
