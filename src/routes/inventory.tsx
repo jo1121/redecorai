@@ -1,40 +1,70 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const mockInventory = [
-  {
-    id: "item001",
-    name: "Modern Floor Lamp",
-    category: "Lighting",
-    image: "/lamp.jpg",
-    status: "saved",
-  },
-  {
-    id: "item002",
-    name: "Cozy Armchair",
-    category: "Furniture",
-    image: "/chair.jpg",
-    status: "saved",
-  },
-];
+interface Item {
+  _id: string;
+  name: string;
+  category: string;
+  image: string;
+  status: string;
+}
 
 export default function Inventory() {
-  const [items, setItems] = useState(mockInventory);
+  const [items, setItems] = useState<Item[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/inventory")
+      .then((res) => setItems(res.data))
+      .catch((err) => console.error("Error fetching inventory:", err));
+  }, []);
 
   const markUsed = (id: string) => {
     setItems(
-      items.map((item) => (item.id === id ? { ...item, status: "used" } : item))
+      items.map((item) =>
+        item._id === id ? { ...item, status: "used" } : item
+      )
     );
+    // Optionally: axios.patch(`/api/inventory/${id}`, { status: "used" });
   };
 
   const deleteItem = (id: string) => {
-    setItems(items.filter((item) => item.id !== id));
+    setItems(items.filter((item) => item._id !== id));
+    // Optionally: axios.delete(`/api/inventory/${id}`);
   };
 
-  const listForSale = (item: any) => {
-    localStorage.setItem("itemToSell", JSON.stringify(item));
-    navigate("/marketplace");
+  const listForSale = async (item: Item) => {
+    const priceStr = window.prompt("Enter price:", "25");
+    const location = window.prompt("Enter location:", "YourCity");
+
+    if (!priceStr || !location) {
+      alert("Price and location are required.");
+      return;
+    }
+
+    const price = parseFloat(priceStr);
+    if (isNaN(price)) {
+      alert("Price must be a valid number.");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:5000/api/marketplace", {
+        name: item.name,
+        price,
+        category: item.category,
+        location,
+        image: item.image,
+        inventoryId: item._id, // this tells backend to also remove from inventory
+      });
+
+      setItems((prevItems) => prevItems.filter((i) => i._id !== item._id)); // frontend update
+      navigate("/marketplace");
+    } catch (err) {
+      console.error("❌ Error listing item:", err);
+    }
   };
 
   return (
@@ -51,7 +81,7 @@ export default function Inventory() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {items.map((item) => (
-              <div key={item.id} className="bg-white shadow rounded-lg p-4">
+              <div key={item._id} className="bg-white shadow rounded-lg p-4">
                 <img
                   src={item.image}
                   alt={item.name}
@@ -65,7 +95,7 @@ export default function Inventory() {
 
                 <div className="mt-3 flex gap-2">
                   <button
-                    onClick={() => markUsed(item.id)}
+                    onClick={() => markUsed(item._id)}
                     className="text-xs bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
                   >
                     Mark as Used
@@ -77,7 +107,7 @@ export default function Inventory() {
                     Sell
                   </button>
                   <button
-                    onClick={() => deleteItem(item.id)}
+                    onClick={() => deleteItem(item._id)}
                     className="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
                   >
                     Delete
