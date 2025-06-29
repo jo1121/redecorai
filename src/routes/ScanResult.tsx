@@ -1,196 +1,93 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+interface DetectionResponse {
+  redecoratedImageUrl: string;
+  items: string[];
+}
 
 export default function ScanResult() {
   const location = useLocation();
-  const image = location.state?.image;
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isSignup, setIsSignup] = useState(false);
-  const [inventoryAdded, setInventoryAdded] = useState(false);
+  const navigate = useNavigate();
+  const uploadedImage = location.state?.image as string | undefined;
+
+  const [redecoratedUrl, setRedecoratedUrl] = useState<string | null>(null);
+  const [items, setItems] = useState<string[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!uploadedImage) return;
+    setLoading(true);
+    const fetchDetection = async () => {
+      try {
+        const form = new FormData();
+        form.append("file", uploadedImage);
+        const res = await fetch("/api/detect", { method: "POST", body: form });
+        if (!res.ok) throw new Error("Detection failed");
+        const data = (await res.json()) as DetectionResponse;
+        setRedecoratedUrl(data.redecoratedImageUrl);
+        setItems(data.items);
+      } catch (e: any) {
+        console.error(e);
+        setError(e.message || "Detection failed");
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDetection();
+  }, [uploadedImage]);
 
   const handleAddToInventory = () => {
-    const isLoggedIn = localStorage.getItem("user") === "true";
-    if (!isLoggedIn) {
-      setShowAuthModal(true);
-    } else {
-      setInventoryAdded(true);
-    }
+    navigate("/inventory", { state: { items } });
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfcf9] text-gray-800 px-4 py-8 flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-4">Scan Result</h1>
-
-      {image ? (
-        <img
-          src={image}
-          alt="Scanned Room"
-          className="w-full max-w-md rounded shadow mb-6"
-        />
-      ) : (
-        <p>No image found.</p>
-      )}
-
-      <div className="max-w-xl w-full text-left bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-2">Detected Items</h2>
-        <ul className="list-disc list-inside text-sm text-gray-600 mb-4">
-          <li>Bed</li>
-          <li>Chair</li>
-          <li>Study Table</li>
-          <li>Lamp</li>
-        </ul>
-
-        <button
-          onClick={handleAddToInventory}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded"
-        >
-          Add Items to Inventory
-        </button>
-
-        {inventoryAdded && (
-          <p className="mt-4 text-green-600 font-medium">
-            Items added to your inventory!
-          </p>
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-between">
+      <div className="flex-grow px-4 py-8 flex justify-center items-center">
+        {loading ? (
+          <p className="text-gray-600">Analyzing image...</p>
+        ) : error ? (
+          <p className="text-red-600">{error}</p>
+        ) : redecoratedUrl ? (
+          <img
+            src={redecoratedUrl}
+            alt="Redecorated Room"
+            className="max-w-full max-h-[70vh] rounded shadow"
+          />
+        ) : (
+          <p className="text-gray-600">No image to analyze.</p>
         )}
       </div>
 
-      {showAuthModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
-            <h2 className="text-lg font-semibold mb-4">
-              {isSignup ? "Sign Up" : "Login"}
-            </h2>
-
-            {isSignup ? (
-              <SignupForm
-                onSuccess={() => {
-                  setShowAuthModal(false);
-                  setInventoryAdded(true);
-                }}
-              />
-            ) : (
-              <LoginForm
-                onSuccess={() => {
-                  setShowAuthModal(false);
-                  setInventoryAdded(true);
-                }}
-              />
-            )}
-
-            <p className="text-sm text-gray-600 mt-4">
-              {isSignup ? "Already have an account?" : "Don’t have an account?"}{" "}
-              <button
-                className="text-blue-600 underline"
-                onClick={() => setIsSignup(!isSignup)}
+      <footer className="bg-white shadow-inner py-6 px-4">
+        <h2 className="text-xl font-semibold mb-4">Detected Items</h2>
+        {items === null ? (
+          <p className="text-gray-600">Detecting items...</p>
+        ) : items.length === 0 ? (
+          <p className="text-gray-600">No items detected.</p>
+        ) : (
+          <ul className="flex flex-wrap gap-4 mb-4">
+            {items.map((item) => (
+              <li
+                key={item}
+                className="bg-gray-100 px-3 py-1 rounded-md text-sm"
               >
-                {isSignup ? "Login" : "Sign up"}
-              </button>
-            </p>
-
-            <button
-              onClick={() => setShowAuthModal(false)}
-              className="mt-4 text-sm text-gray-500 underline"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+                {item}
+              </li>
+            ))}
+          </ul>
+        )}
+        {items && items.length > 0 && (
+          <button
+            onClick={handleAddToInventory}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md"
+          >
+            Add Items to Inventory
+          </button>
+        )}
+      </footer>
     </div>
-  );
-}
-
-// Login form
-function LoginForm({ onSuccess }: { onSuccess: () => void }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email && password) {
-      localStorage.setItem("user", "true");
-      onSuccess();
-    } else {
-      alert("Please fill in both fields.");
-    }
-  };
-
-  return (
-    <form onSubmit={handleLogin} className="flex flex-col gap-3">
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        className="border px-4 py-2 rounded"
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        className="border px-4 py-2 rounded"
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <button
-        type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
-      >
-        Login
-      </button>
-    </form>
-  );
-}
-
-// Signup form
-function SignupForm({ onSuccess }: { onSuccess: () => void }) {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (username && email && password) {
-      localStorage.setItem("user", "true");
-      onSuccess();
-    } else {
-      alert("Please fill all fields.");
-    }
-  };
-
-  return (
-    <form onSubmit={handleSignup} className="flex flex-col gap-3">
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        className="border px-4 py-2 rounded"
-        onChange={(e) => setUsername(e.target.value)}
-        required
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        className="border px-4 py-2 rounded"
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        className="border px-4 py-2 rounded"
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <button
-        type="submit"
-        className="bg-green-600 hover:bg-green-700 text-white py-2 rounded"
-      >
-        Sign Up
-      </button>
-    </form>
   );
 }
