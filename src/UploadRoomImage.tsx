@@ -16,22 +16,26 @@ const UploadRoomImage: React.FC = () => {
   };
 
   const handleUpload = async () => {
-    if (!file) {
-      alert("Please select an image first.");
-      return;
-    }
+  if (!file) {
+    alert("Please select an image first.");
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("image", file);
+  const formData = new FormData();
+  formData.append("image", file);
 
-    try {
-      const res = await axios.post("http://localhost:5000/api/upload-room", formData);
-      setResponse(res.data.message + " → " + res.data.filename);
-    } catch (error) {
-      console.error(error);
-      setResponse("Upload failed.");
-    }
-  };
+  try {
+    const res = await axios.post("http://localhost:5000/api/upload-room", formData);
+    const uploadedFilename = res.data.filename;
+
+    // ✅ Redirect to ScanResult page with filename
+    window.location.href = `/scan-result?file=${uploadedFilename}`;
+  } catch (error) {
+    console.error(error);
+    setResponse("Upload failed.");
+  }
+};
+
 
   return (
     <div style={{ padding: "20px" }}>

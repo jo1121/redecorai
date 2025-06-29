@@ -1,37 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const dummyItems = [
-  {
-    id: 1,
-    name: "Vintage Lamp",
-    price: 30,
-    category: "Lighting",
-    location: "New York",
-    image: "/placeholder.jpg",
-  },
-  {
-    id: 2,
-    name: "Boho Carpet",
-    price: 50,
-    category: "Rugs",
-    location: "Chicago",
-    image: "/placeholder.jpg",
-  },
-  {
-    id: 3,
-    name: "Fiddle Leaf Plant",
-    price: 25,
-    category: "Plants",
-    location: "San Francisco",
-    image: "/placeholder.jpg",
-  },
-];
+interface MarketplaceItem {
+  _id: string;
+  name: string;
+  price: number;
+  category: string;
+  location: string;
+  image: string;
+}
 
 export default function Marketplace() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [items, setItems] = useState<MarketplaceItem[]>([]);
 
-  const filteredItems = dummyItems.filter((item) => {
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/marketplace")
+      .then(res => setItems(res.data))
+      .catch(err => console.error("Error fetching marketplace items:", err));
+  }, []);
+
+  const filteredItems = items.filter(item => {
     const matchSearch = item.name.toLowerCase().includes(search.toLowerCase());
     const matchCategory = category === "All" || item.category === category;
     return matchSearch && matchCategory;
@@ -66,7 +56,7 @@ export default function Marketplace() {
         {/* Item Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filteredItems.map((item) => (
-            <div key={item.id} className="bg-white p-4 shadow rounded-lg">
+            <div key={item._id} className="bg-white p-4 shadow rounded-lg">
               <img
                 src={item.image}
                 alt={item.name}
