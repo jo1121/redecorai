@@ -11,6 +11,10 @@
       "ppa": true,
       "version": "latest"
     },
+    "ghcr.io/devcontainers/features/git-lfs:1": {
+      "autoPull": true,
+      "version": "latest"
+    },
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
       "version": "latest"
@@ -21,7 +25,7 @@
     "vscode": {
       "extensions": [
         "bradlc.vscode-tailwindcss",
-        "esbenp.prettier-vscode",
+        "esbenp.prettier-vscode", 
         "dbaeumer.vscode-eslint",
         "ms-vscode.vscode-typescript-next",
         "formulahendry.auto-rename-tag",
@@ -57,12 +61,12 @@
       "onAutoForward": "notify"
     },
     "3000": {
-      "label": "Alternative Dev Server",
+      "label": "Alternative Dev Server", 
       "onAutoForward": "ignore"
     }
   },
 
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "npm install && git lfs install",
   "postStartCommand": "npm run dev",
 
   "remoteUser": "node",
