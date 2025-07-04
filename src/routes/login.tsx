@@ -1,62 +1,80 @@
 import React, { useState } from "react";
 import axios from "axios";
-import PageWrapper from "../components/PageWrapper";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import PageWrapper from "@/components/PageWrapper"; // alias is already fine
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
     try {
-      const res = await axios.post("http://localhost:5000/api/login", {
-        email,
-        password,
-      });
-      console.log("✅ Login success:", res.data);
-      alert("Login successful!");
-      navigate("/dashboard"); // Redirect after login
+      const resp = await axios.post(
+        `${import.meta.env.VITE_API_URL}/login`,
+        { username, password },
+        { withCredentials: true }
+      );
+
+      // ✅ Show success alert
+      alert(resp.data.message || "Login successful!");
+
+      // ✅ Save token and user data
+      localStorage.setItem("token", resp.data.token || "");
+      localStorage.setItem("user", JSON.stringify(resp.data.user));
+
+      // ✅ Navigate to inventory
+      navigate("/inventory");
     } catch (err: any) {
-      console.error("❌ Login failed:", err.response?.data || err.message);
-      alert(err.response?.data?.error || "Login failed");
+      console.error("Login error", err);
+      setError(err.response?.data?.error || "Invalid username or password.");
     }
   };
 
   return (
     <PageWrapper>
-      <h2 className="text-xl font-semibold mb-4">Login</h2>
-      <form className="space-y-4" onSubmit={handleLogin}>
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
+      <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-xl shadow">
+        <h2 className="text-2xl font-bold mb-4">Login</h2>
+        {error && (
+          <div className="p-2 mb-4 text-red-700 bg-red-100 rounded">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="email"
-            placeholder="Enter your email"
-            className="w-full border px-3 py-2 rounded bg-white text-black"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Username or Email"
+            className="w-full px-4 py-2 border rounded"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Password</label>
           <input
             type="password"
-            placeholder="Enter your password"
-            className="w-full border px-3 py-2 rounded bg-white text-black"
+            placeholder="Password"
+            className="w-full px-4 py-2 border rounded"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          Login
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Sign In
+          </button>
+        </form>
+        <p className="mt-4 text-center text-sm">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="text-blue-600 hover:underline">
+            Sign up
+          </Link>
+        </p>
+      </div>
     </PageWrapper>
   );
 }

@@ -44,13 +44,19 @@ export default function ScanResult() {
       {error && <p className="text-red-500">{error}</p>}
 
       {!loading && suggestions.length === 0 && !error && (
-        <p className="text-gray-500">No suggestions available yet. Try again later.</p>
+        <p className="text-gray-500">
+          No suggestions available yet. Try again later.
+        </p>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {suggestions.map((item, index) => (
           <div key={index} className="bg-white shadow p-4 rounded-lg">
-            <img src={item.image} alt={item.name} className="w-full h-40 object-cover mb-3 rounded" />
+            <img
+              src={item.image}
+              alt={item.name}
+              className="w-full h-40 object-cover mb-3 rounded"
+            />
             <h2 className="text-lg font-semibold">{item.name}</h2>
             <p className="text-sm text-gray-600">{item.description}</p>
           </div>
@@ -59,4 +65,3 @@ export default function ScanResult() {
     </div>
   );
 }
-

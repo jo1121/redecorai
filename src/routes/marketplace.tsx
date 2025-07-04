@@ -16,12 +16,13 @@ export default function Marketplace() {
   const [items, setItems] = useState<MarketplaceItem[]>([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/marketplace")
-      .then(res => setItems(res.data))
-      .catch(err => console.error("Error fetching marketplace items:", err));
+    axios
+      .get("http://localhost:5000/api/marketplace")
+      .then((res) => setItems(res.data))
+      .catch((err) => console.error("Error fetching marketplace items:", err));
   }, []);
 
-  const filteredItems = items.filter(item => {
+  const filteredItems = items.filter((item) => {
     const matchSearch = item.name.toLowerCase().includes(search.toLowerCase());
     const matchCategory = category === "All" || item.category === category;
     return matchSearch && matchCategory;

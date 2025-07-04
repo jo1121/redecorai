@@ -1,27 +1,37 @@
 version: "3.8"
+
 services:
+  mongo:
+    image: mongo:6
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    restart: always
+    environment:
+      - MONGO_URI=${MONGO_URI} # set this in your Codespace secrets or .env
     ports:
-      - "3001:3001"
+      - "5000:5000"
+    depends_on:
+      - mongo
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: . # your root is where `src/Dockerfile` lives
+      dockerfile: src/Dockerfile
+    restart: always
+    environment:
+      - VITE_BACKEND_URL=http://backend:5000
     ports:
-      - "3000:3000"
+      - "5173:5173"
     depends_on:
       - backend
-
-  mongo:
-    image: mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
 
 volumes:
   mongo-data:

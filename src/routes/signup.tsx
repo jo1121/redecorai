@@ -33,7 +33,10 @@ export default function Signup() {
       });
       alert(res.data.message || "Google sign-up success");
     } catch (err: any) {
-      console.error("Google sign-up failed:", err.response?.data || err.message);
+      console.error(
+        "Google sign-up failed:",
+        err.response?.data || err.message
+      );
       alert("Google sign-up failed");
     }
   };
@@ -51,7 +54,9 @@ export default function Signup() {
         <button className="w-full border py-2 rounded hover:bg-gray-100 bg-white text-black">
           Continue with Facebook
         </button>
-        <div className="text-center text-sm text-gray-500">or sign up with email</div>
+        <div className="text-center text-sm text-gray-500">
+          or sign up with email
+        </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
