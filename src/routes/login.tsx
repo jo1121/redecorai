@@ -78,3 +78,4 @@ export default function Login() {
     </PageWrapper>
   );
 }
+console.log("API URL is:", import.meta.env.VITE_API_URL);

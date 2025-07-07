@@ -2,16 +2,23 @@ import React, { useState } from "react";
 import axios from "axios";
 import PageWrapper from "../components/PageWrapper";
 import { GoogleLogin } from "@react-oauth/google";
+
 export default function Signup() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail]     = useState("");
   const [password, setPassword] = useState("");
+
+  // Pull your API base URL from Vite env
+  const API = import.meta.env.VITE_API_URL;
 
   // ✅ Manual Sign Up Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const url = `${API}/register`;
+    console.log("🔍 Register URL:", url);
+
     try {
-      const res = await axios.post("http://localhost:5000/api/register", {
+      const res = await axios.post(url, {
         username,
         email,
         password,
@@ -26,17 +33,18 @@ export default function Signup() {
 
   // ✅ Google Sign Up
   const handleGoogleSuccess = async (credentialResponse: any) => {
-    console.log("Google Signup:", credentialResponse);
+    console.log("🔍 Google credential:", credentialResponse);
+    const url = `${API}/google-signup`;
+    console.log("🔍 Google Signup URL:", url);
+
     try {
-      const res = await axios.post("http://localhost:5000/api/google-signup", {
+      const res = await axios.post(url, {
         token: credentialResponse.credential,
       });
+      console.log("✅ Google signup:", res.data);
       alert(res.data.message || "Google sign-up success");
     } catch (err: any) {
-      console.error(
-        "Google sign-up failed:",
-        err.response?.data || err.message
-      );
+      console.error("❌ Google sign-up failed:", err.response?.data || err.message);
       alert("Google sign-up failed");
     }
   };
