@@ -1,0 +1,12 @@
+ultralytics==8.0.176
+opencv-python
+numpy
+Pillow
+matplotlib
+torch
+diffusers
+transformers
+scipy
+
+fastapi
+uvicorn
