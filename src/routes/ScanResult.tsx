@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
 
 interface Suggestion {
@@ -20,7 +20,7 @@ export default function ScanResult() {
   useEffect(() => {
     if (filename) {
       axios
-        .get(`http://localhost:5000/api/scan-result/${filename}`)
+        .get(`${import.meta.env.VITE_API_URL}/scan-result/${filename}`)
         .then((res) => {
           setSuggestions(res.data);
           setLoading(false);
@@ -36,9 +36,40 @@ export default function ScanResult() {
     }
   }, [filename]);
 
+  // Only show if we have detected items
+  const handleAddToInventory = async () => {
+    try {
+      await Promise.all(
+        suggestions.map((item) =>
+          axios.post(`${import.meta.env.VITE_API_URL}/inventory`, item)
+        )
+      );
+      alert("Items added to inventory!");
+    } catch (err) {
+      console.error("Error adding to inventory:", err);
+      alert("Failed to add items to inventory.");
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-6">🧠 AI Design Suggestions</h1>
+      {/* Back to Home & Title */}
+      <div className="mb-6 flex items-center justify-between">
+        <Link to="/" className="text-blue-600 hover:underline">
+          &larr; Back to Home
+        </Link>
+        <h1 className="text-2xl font-bold">🧠 AI Design Suggestions</h1>
+      </div>
+
+      {/* Add to Inventory button only if suggestions exist */}
+      {!loading && !error && suggestions.length > 0 && (
+        <button
+          onClick={handleAddToInventory}
+          className="mb-6 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Add to Inventory
+        </button>
+      )}
 
       {loading && <p>Loading suggestions...</p>}
       {error && <p className="text-red-500">{error}</p>}

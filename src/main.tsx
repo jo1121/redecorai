@@ -1,5 +1,4 @@
 // src/main.tsx
-
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -7,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
 import Layout from "./components/Layout"; // your video-background layout
-import AppLayout from "./App"; // your header/sidebar + <Outlet/>
+import AppLayout from "./App"; // header/sidebar + <Outlet/>
 import Home from "./routes/home";
 import Scan from "./routes/scan";
 import Marketplace from "./routes/marketplace";
@@ -17,7 +16,6 @@ import Suggestions from "./routes/suggestions";
 import Login from "./routes/login";
 import Signup from "./routes/signup";
 import About from "./routes/about";
-import Dashboard from "./routes/Dashboard";
 import Tutorial from "./routes/Tutorial";
 import ScanResult from "./routes/ScanResult";
 
@@ -30,7 +28,7 @@ if (!googleClientId) {
   );
 }
 
-// Wrap AppLayout in your global Layout (e.g. the video BG)
+// Wrap AppLayout in your global Layout
 const RootLayout = () => (
   <Layout>
     <AppLayout />
@@ -51,9 +49,9 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
       { path: "about", element: <About /> },
-      { path: "dashboard", element: <Dashboard /> },
       { path: "tutorial", element: <Tutorial /> },
       { path: "scan-result", element: <ScanResult /> },
+      // Dashboard route removed!
     ],
   },
 ]);

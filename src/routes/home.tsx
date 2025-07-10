@@ -55,13 +55,26 @@ export default function Home() {
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [user, setUser] = useState<{ username?: string } | null>(null);
 
+  // Toggle dark mode
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 
+  // Load user from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    try {
+      if (stored) setUser(JSON.parse(stored));
+    } catch {
+      setUser(null);
+    }
+  }, []);
+
   const handleInventoryClick = () => {
-    const isLoggedIn = localStorage.getItem("user") === "true";
+    // Check if any user data exists
+    const isLoggedIn = !!localStorage.getItem("user");
     if (isLoggedIn) {
       navigate("/inventory");
     } else {
@@ -130,7 +143,6 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-12">
             Explore Features
           </h2>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feat, idx) => (
               <motion.div
@@ -173,7 +185,10 @@ export default function Home() {
             <button
               className="bg-blue-600 text-white w-full py-2 rounded mt-2"
               onClick={() => {
-                localStorage.setItem("user", "true");
+                localStorage.setItem(
+                  "user",
+                  JSON.stringify({ username: "User" })
+                );
                 setShowLogin(false);
                 navigate("/inventory");
               }}

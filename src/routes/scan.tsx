@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Scan() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -78,9 +78,13 @@ export default function Scan() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-[#fefdfb] text-center">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-        Scan Your Room
-      </h2>
+      {/* Back to Home & Title */}
+      <div className="w-full max-w-md mb-6 flex items-center justify-between">
+        <Link to="/" className="text-blue-600 hover:underline">
+          &larr; Back to Home
+        </Link>
+        <h2 className="text-2xl font-semibold text-gray-800">Scan Your Room</h2>
+      </div>
 
       <div
         className="relative w-full max-w-md h-64 border border-dashed rounded-md bg-white flex items-center justify-center overflow-hidden"
