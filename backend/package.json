@@ -2,10 +2,10 @@
   "name": "redecorai-backend",
   "version": "1.0.0",
   "description": "RedecoAI Backend API",
-  "main": "server.js",
+  "main": "index.cjs",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node index.cjs",
+    "dev": "nodemon index.cjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

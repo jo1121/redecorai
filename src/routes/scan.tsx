@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Upload, Camera, Loader2, AlertCircle, Check, ArrowLeft } from 'lucide-react';
 
@@ -27,6 +26,7 @@ const ScanPage = () => {
 
   const [scanResults, setScanResults] = useState<ScanResults | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [backendStatus, setBackendStatus] = useState<'unknown' | 'connected' | 'disconnected'>('unknown');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // API base URL - update this to match your backend
@@ -77,10 +77,14 @@ const ScanPage = () => {
 
     } catch (err) {
       console.error('Scan error:', err);
-      if (err instanceof Error) {
-        setError(err.message || 'Failed to scan image. Make sure the backend is running.');
+      
+      // Handle different types of errors
+      if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
+        setError(`Backend server is not running. Please start the backend on port 5000 or check your connection.`);
+      } else if (err instanceof Error) {
+        setError(err.message || 'Failed to scan image. Please try again.');
       } else {
-        setError('Failed to scan image. Make sure the backend is running.');
+        setError('An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsScanning(false);
@@ -107,6 +111,21 @@ const ScanPage = () => {
         setError(null);
         setScanResults(null);
       }
+    }
+  };
+
+  const checkBackendHealth = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/health`);
+      if (response.ok) {
+        setBackendStatus('connected');
+        setError(null);
+      } else {
+        setBackendStatus('disconnected');
+      }
+    } catch (err) {
+      setBackendStatus('disconnected');
+      console.error('Backend health check failed:', err);
     }
   };
 
@@ -257,6 +276,24 @@ const ScanPage = () => {
             <p className="text-white/70">
               <strong>Backend URL:</strong> {API_BASE_URL}
             </p>
+            <p className="text-white/70">
+              <strong>Backend Status:</strong> 
+              <span className={`ml-2 px-2 py-1 rounded text-xs ${
+                backendStatus === 'connected' ? 'bg-green-500/50 text-green-200' :
+                backendStatus === 'disconnected' ? 'bg-red-500/50 text-red-200' :
+                'bg-gray-500/50 text-gray-200'
+              }`}>
+                {backendStatus === 'connected' ? '✅ Connected' :
+                 backendStatus === 'disconnected' ? '❌ Disconnected' :
+                 '❓ Unknown'}
+              </span>
+            </p>
+            <button
+              onClick={checkBackendHealth}
+              className="px-3 py-1 bg-blue-500/50 text-blue-200 rounded text-xs hover:bg-blue-500/70 transition-colors"
+            >
+              Test Backend Connection
+            </button>
             <p className="text-white/70">
               <strong>Selected file:</strong> {selectedFile?.name || 'None'}
             </p>
