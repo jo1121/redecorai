@@ -30,7 +30,7 @@ const ScanPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // API base URL - update this to match your backend
-  const API_BASE_URL = 'http://localhost:3001';
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -60,7 +60,7 @@ const ScanPage = () => {
       console.log('Sending file to backend:', selectedFile.name);
 
       // Send to your backend detection endpoint
-      const response = await fetch(`${API_BASE_URL}/api/detect-objects`, {
+      const response = await fetch(`${API_BASE_URL}/detect-objects`, {
         method: 'POST',
         body: formData,
       });
@@ -80,7 +80,7 @@ const ScanPage = () => {
       
       // Handle different types of errors
       if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
-        setError(`Backend server is not running. Please start the backend on port 5000 or check your connection.`);
+        setError(`Cannot connect to backend server at ${API_BASE_URL}. Make sure the backend is running: cd backend && npm start`);
       } else if (err instanceof Error) {
         setError(err.message || 'Failed to scan image. Please try again.');
       } else {
@@ -116,7 +116,7 @@ const ScanPage = () => {
 
   const checkBackendHealth = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/health`);
+      const response = await fetch(`${API_BASE_URL}/../health`);
       if (response.ok) {
         setBackendStatus('connected');
         setError(null);

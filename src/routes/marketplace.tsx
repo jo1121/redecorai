@@ -18,7 +18,7 @@ const MarketplacePage = () => {
   const [error, setError] = useState<string | null>(null);
 
   // API base URL - update this to match your backend
-  const API_BASE_URL = 'http://localhost:3001';
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -26,7 +26,7 @@ const MarketplacePage = () => {
       setError(null);
       
       try {
-        const response = await fetch(`${API_BASE_URL}/api/marketplace`);
+        const response = await fetch(`${API_BASE_URL}/marketplace`);
         const data = await response.json();
         
         if (response.ok) {
@@ -49,7 +49,7 @@ const MarketplacePage = () => {
     };
 
     fetchItems();
-  }, []);
+  }, [API_BASE_URL]);
 
   // Safe filter - ensure items is always an array
   const filteredItems = Array.isArray(items) ? items.filter((item) => {
