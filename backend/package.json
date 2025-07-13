@@ -1,12 +1,16 @@
 {
   "name": "redecorai-backend",
   "version": "1.0.0",
+  "description": "RedecoAI Backend API",
   "main": "index.cjs",
   "scripts": {
-    "start": "node index.cjs"
+    "start": "node index.cjs",
+    "dev": "nodemon index.cjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "axios": "^1.10.0",
+<<<<<<< HEAD
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
@@ -15,5 +19,18 @@
     "google-auth-library": "^10.1.0",
     "mongoose": "^8.16.3",
     "multer": "^2.0.1"
+=======
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "form-data": "^4.0.3",
+    "google-auth-library": "^9.15.1",
+    "mongoose": "^7.8.7",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+>>>>>>> 57e34e3e148a3c63195aee14c1d7909260dd8c12
   }
 }

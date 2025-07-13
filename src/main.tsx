@@ -7,6 +7,7 @@ import "./index.css";
 
 import Layout from "./components/Layout"; // your video-background layout
 import AppLayout from "./App"; // header/sidebar + <Outlet/>
+import ErrorBoundary from "./components/ErrorBoundary";
 import Home from "./routes/home";
 import Scan from "./routes/scan";
 import Marketplace from "./routes/marketplace";
@@ -58,8 +59,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={googleClientId!}>
-      <RouterProvider router={router} />
-    </GoogleOAuthProvider>
+    <ErrorBoundary>
+      <GoogleOAuthProvider clientId={googleClientId!}>
+        <RouterProvider router={router} />
+      </GoogleOAuthProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 );
