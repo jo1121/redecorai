@@ -20,12 +20,23 @@ ReDécorAI is a modern, AI-powered interior design assistant that helps you tran
 - 🔐 Authentication: Email, Google, Facebook
 
 ---
+## Try in Codespace
+# Backend (Express)
+cd backend
+npm install
+npm run dev
 
-## 📸 Screenshots
+# In a second terminal → ML Backend
+cd ../ml/roomredecor-ml
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
+uvicorn ml_api:app --host 0.0.0.0 --port 5001 --reload
 
-> Add screenshots or screen recordings here.
+# In another terminal → Frontend
+cd ../../               # back to repo root
+npm install
+npm run dev
 
----
 
 ## 🧪 Try It Locally
 
