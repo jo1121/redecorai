@@ -1,3 +1,6 @@
+![college dorm aesthetic dark academia college dorm…_detected](https://github.com/user-attachments/assets/df767c33-c3cb-4008-9c2a-56868535996e)
+![WhatsApp Image 2025-07-01 at 16 46 27_cfbee02d_detected](https://github.com/user-attachments/assets/9fa14fbe-8b26-4143-a0c2-de0be54e8436)
+![college dorm aesthetic dark academia college dorm…_detected](https://github.com/user-attachments/assets/5922cf2a-5f46-4d22-8bb3-fe5d7029ebea)
 # 🛋️ ReDécorAI — Smart Interior Design Web App
 
 ReDécorAI is a modern, AI-powered interior design assistant that helps you transform your living space by simply scanning your room or uploading a photo. Built with a minimal, Apple-style aesthetic, it combines beauty, performance, and intuitive design.
