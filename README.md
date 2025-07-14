@@ -130,7 +130,7 @@ Served from a CDN (e.g., Cloudinary or Firebase)
 
 John Nayathodan – Lead Developer
 
-jo1121 – Repository Host
+joyelraju- machine learning(Repository Host)
 
 
 
