@@ -5,11 +5,13 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
-import Layout from "./components/Layout"; // your video-background layout
-import AppLayout from "./App"; // header/sidebar + <Outlet/>
+import Layout from "./components/Layout"; // your video background wrapper
+import AppLayout from "./App"; // the file above, with <Outlet/>
 import ErrorBoundary from "./components/ErrorBoundary";
+
 import Home from "./routes/home";
 import Scan from "./routes/scan";
+import ScanResult from "./routes/ScanResult"; // <-- import it!
 import Marketplace from "./routes/marketplace";
 import Inventory from "./routes/inventory";
 import Profile from "./routes/profile";
@@ -18,18 +20,8 @@ import Login from "./routes/login";
 import Signup from "./routes/signup";
 import About from "./routes/about";
 import Tutorial from "./routes/Tutorial";
-import ScanResult from "./routes/ScanResult";
 
-// Pull your client ID from environment
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-if (!googleClientId) {
-  console.error(
-    "❌ Missing VITE_GOOGLE_CLIENT_ID in .env.local – " +
-      "be sure to restart your dev server after adding it!"
-  );
-}
-
-// Wrap AppLayout in your global Layout
+// Wrap your header/layout in your global Layout:
 const RootLayout = () => (
   <Layout>
     <AppLayout />
@@ -43,6 +35,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "scan", element: <Scan /> },
+      { path: "scanresult", element: <ScanResult /> }, // <-- correct route
       { path: "marketplace", element: <Marketplace /> },
       { path: "inventory", element: <Inventory /> },
       { path: "profile", element: <Profile /> },
@@ -51,8 +44,18 @@ const router = createBrowserRouter([
       { path: "signup", element: <Signup /> },
       { path: "about", element: <About /> },
       { path: "tutorial", element: <Tutorial /> },
-      { path: "scan-result", element: <ScanResult /> },
-      // Dashboard route removed!
+      // optional catch-all 404:
+      {
+        path: "*",
+        element: (
+          <div className="p-10 text-center">
+            <h1 className="text-3xl font-bold">404 – Page Not Found</h1>
+            <button onClick={() => window.location.replace("/")}>
+              Go Home
+            </button>
+          </div>
+        ),
+      },
     ],
   },
 ]);
@@ -60,7 +63,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <GoogleOAuthProvider clientId={googleClientId!}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID!}>
         <RouterProvider router={router} />
       </GoogleOAuthProvider>
     </ErrorBoundary>

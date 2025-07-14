@@ -1,169 +1,119 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Package, ShoppingCart, Loader2 } from "lucide-react";
+// src/routes/ScanResult.tsx
 
-// Define the type for a suggestion
-interface Suggestion {
-  name: string;
-  description: string;
-  category?: string;
-  // Add more fields if needed
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+
+interface LocationState {
+  outputImages?: string[];
+  detectionResult?: {
+    objects?: { name: string; category: string }[];
+  };
+  // you can extend this if you passed more state
 }
 
-const ScanResultPage = () => {
-  const { filename } = useParams<{ filename?: string }>();
+export default function ScanResult() {
+  const location = useLocation();
   const navigate = useNavigate();
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const state = location.state as LocationState;
+  const outputImages = state.outputImages || [];
+  const detectedObjects = state.detectionResult?.objects || [];
+  const [adding, setAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (filename) {
-      fetchSuggestions();
+  const handleAddToInventory = async () => {
+    if (detectedObjects.length === 0) {
+      setError("No items to add.");
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filename]);
 
-  const fetchSuggestions = async () => {
+    setAdding(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(
-        `http://localhost:3001/api/scan-result/${filename}`
+      // Adjust the URL to match your backend's inventory POST endpoint
+      const API = import.meta.env.VITE_API_URL || "http://localhost:5001";
+      await axios.post(
+        `${API}/inventory`,
+        { items: detectedObjects },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
       );
-      if (response.ok) {
-        const data = await response.json();
-        setSuggestions(data);
-      } else {
-        throw new Error("Failed to fetch suggestions");
-      }
-    } catch (err: unknown) {
-      console.error("Error fetching suggestions:", err);
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Unknown error");
-      }
+      // On success, navigate to inventory
+      navigate("/inventory");
+    } catch (err: any) {
+      console.error("Add to inventory error:", err);
+      setError(err.response?.data?.error || "Failed to add items.");
     } finally {
-      setLoading(false);
+      setAdding(false);
     }
   };
 
-  if (loading) {
+  if (outputImages.length === 0 && detectedObjects.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-white animate-spin mx-auto mb-4" />
-          <p className="text-white">Loading suggestions...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 mb-4">Error: {error}</p>
-          <button
-            onClick={() => navigate("/scan")}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4">
+        <h2 className="text-2xl font-semibold mb-4 text-red-600">
+          No processed images or items found.
+        </h2>
+        <Button onClick={() => navigate("/scan")}>Back to Scan</Button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-      {/* Header */}
-      <div className="bg-white/10 backdrop-blur-sm border-b border-white/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
-            <button
-              onClick={() => navigate("/scan")}
-              className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Scan
-            </button>
-            <h1 className="text-xl font-semibold text-white">
-              Design Suggestions
-            </h1>
-            <div className="w-24"></div>
+    <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-20">
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Scan Results</h1>
+
+        {outputImages.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {outputImages.map((url, idx) => (
+              <img
+                key={idx}
+                src={`http://localhost:5001${url}`}
+                alt={`Result ${idx + 1}`}
+                className="w-full rounded shadow"
+              />
+            ))}
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">
-            🎨 AI Design Suggestions
-          </h2>
-          <p className="text-white/80">
-            Based on your room analysis, here are our recommendations
-          </p>
-        </div>
+        {detectedObjects.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2 text-gray-700">
+              Detected Objects:
+            </h2>
+            <ul className="list-disc list-inside text-gray-800">
+              {detectedObjects.map((obj, i) => (
+                <li key={i}>
+                  {obj.name}{" "}
+                  <span className="text-sm text-gray-500">
+                    ({obj.category})
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-        {/* Suggestions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {suggestions.map((suggestion, index) => (
-            <div
-              key={index}
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/15 transition-colors"
-            >
-              <div className="w-full h-48 bg-gray-300 rounded-lg mb-4 flex items-center justify-center">
-                <Package className="w-16 h-16 text-gray-500" />
-              </div>
+        {error && <p className="text-red-600 mb-4">{error}</p>}
 
-              <h3 className="text-lg font-semibold text-white mb-2">
-                {suggestion.name}
-              </h3>
-
-              <p className="text-white/80 text-sm mb-4">
-                {suggestion.description}
-              </p>
-
-              {suggestion.category && (
-                <span className="inline-block px-3 py-1 bg-blue-500/50 text-blue-200 rounded-full text-xs mb-4">
-                  {suggestion.category}
-                </span>
-              )}
-
-              <div className="flex gap-2">
-                <button className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm">
-                  Add to Wishlist
-                </button>
-                <button className="flex-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm">
-                  <ShoppingCart className="w-4 h-4 inline mr-1" />
-                  Shop
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-4 justify-center">
-          <button
+        <div className="flex gap-4 mt-6">
+          <Button
+            variant="outline"
             onClick={() => navigate("/scan")}
-            className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+            disabled={adding}
           >
-            Scan Another Room
-          </button>
-          <button
-            onClick={() => navigate("/marketplace")}
-            className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-          >
-            Browse Marketplace
-          </button>
+            Scan Again
+          </Button>
+          <Button onClick={handleAddToInventory} disabled={adding}>
+            {adding ? "Adding…" : "Add to Inventory"}
+          </Button>
         </div>
       </div>
     </div>
   );
-};
-
-export default ScanResultPage;
+}

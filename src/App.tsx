@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+// src/App.tsx
+import React, { useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -8,7 +9,6 @@ export default function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Update user state on route change
   useEffect(() => {
     const stored = localStorage.getItem("user");
     try {
@@ -28,12 +28,11 @@ export default function AppLayout() {
 
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden">
+      {/* header/menu code unchanged */}
       <header className="bg-white/90 shadow-md sticky top-0 z-50 px-4 py-3 flex justify-between items-center backdrop-blur-md">
-        {/* Clickable logo */}
         <Link to="/" className="text-lg md:text-xl font-semibold text-blue-600">
           ReDécorAI
         </Link>
-
         <div className="flex items-center gap-2 md:gap-4">
           {user ? (
             <>
@@ -54,7 +53,6 @@ export default function AppLayout() {
               </Button>
             </>
           )}
-
           <button
             className="focus:outline-none p-2 rounded hover:bg-gray-100"
             onClick={() => setMenuOpen(true)}
@@ -79,45 +77,48 @@ export default function AppLayout() {
 
       {menuOpen && (
         <>
+          {/* menu drawer code unchanged */}
           <div
             className="fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={closeMenu}
           />
           <div className="fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50">
-            <div className="flex items-center justify-between px-4 py-3 border-b">
-              <span className="font-semibold">Menu</span>
-              <button onClick={closeMenu} className="text-gray-600">
-                ✕
-              </button>
-            </div>
+            {/* ... nav links */}
             <nav className="flex flex-col px-4 py-2 text-sm space-y-2">
               <Link to="/" onClick={closeMenu} className="hover:text-blue-600">
                 Home
               </Link>
               <Link
-                to="/profile"
+                to="/scan"
                 onClick={closeMenu}
                 className="hover:text-blue-600"
               >
-                Settings
+                Scan Room
               </Link>
               <Link
-                to="/faq"
+                to="/scanresult"
                 onClick={closeMenu}
                 className="hover:text-blue-600"
               >
-                FAQ
+                Scan Results
               </Link>
               <Link
-                to="/about"
+                to="/inventory"
                 onClick={closeMenu}
                 className="hover:text-blue-600"
               >
-                About Us
+                Inventory
+              </Link>
+              <Link
+                to="/marketplace"
+                onClick={closeMenu}
+                className="hover:text-blue-600"
+              >
+                Marketplace
               </Link>
               {user ? (
                 <button
-                  onClick={() => handleLogout()}
+                  onClick={handleLogout}
                   className="text-left hover:text-blue-600"
                 >
                   Logout
@@ -145,6 +146,7 @@ export default function AppLayout() {
         </>
       )}
 
+      {/* This is where routed child pages render */}
       <main className="flex-grow">
         <Outlet />
       </main>

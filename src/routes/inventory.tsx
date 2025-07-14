@@ -1,6 +1,9 @@
+// src/routes/inventory.tsx
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
 
 interface InventoryItem {
   _id: string;
@@ -19,12 +22,26 @@ export default function Inventory() {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/inventory`,
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
-        setItems(res.data);
+
+        // Normalize whatever the backend returned into an array
+        const data = res.data;
+        let list: InventoryItem[] = [];
+
+        if (Array.isArray(data)) {
+          list = data;
+        } else if (Array.isArray((data as any).items)) {
+          list = (data as any).items;
+        } else if (Array.isArray((data as any).inventory_items)) {
+          list = (data as any).inventory_items;
+        } else {
+          console.warn("Unexpected inventory shape:", data);
+        }
+
+        setItems(list);
       } catch (err: any) {
+        console.error(err);
         setError(err.response?.data?.error || "Failed to load inventory.");
       } finally {
         setLoading(false);
@@ -35,7 +52,6 @@ export default function Inventory() {
 
   return (
     <div className="max-w-4xl mx-auto py-8">
-      {/* Back to Home Button */}
       <div className="mb-6">
         <Link to="/" className="inline-block text-blue-600 hover:underline">
           &larr; Back to Home
@@ -54,6 +70,7 @@ export default function Inventory() {
           {items.length === 0 ? (
             <p>No items saved yet. Start by scanning your room!</p>
           ) : (
+            // items is guaranteed to be an array here
             items.map((item) => (
               <div
                 key={item._id}
