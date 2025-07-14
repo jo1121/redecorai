@@ -142,11 +142,11 @@ Served from a CDN (e.g., Cloudinary or Firebase)
 
 👨‍💻 Contributors
 
-John Nayathodan – Lead Developer
+John Nayathodan – frontend Developer
 
 joyelraju- machine learning(Repository Host)
 
-
+Safreena Adan Kok- backend 
 
 ---
 
