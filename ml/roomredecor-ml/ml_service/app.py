@@ -8,6 +8,13 @@ import base64
 import io
 from PIL import Image
 import json
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # reads ml/.env
+
+# … the rest of your imports and app definition …
+
 
 app = Flask(__name__)
 CORS(app, origins=["*"])
@@ -113,6 +120,6 @@ def get_categories():
     })
 
 if __name__ == '__main__':
-    port = int(os.getenv('ML_SERVICE_PORT', 5001))
+    port = int(os.getenv('ML_SERVICE_PORT', 8080))
     print(f"Starting ML service on port {port}")
     app.run(host='0.0.0.0', port=port, debug=True)

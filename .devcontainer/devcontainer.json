@@ -1,12 +1,19 @@
+// .devcontainer/devcontainer.json
 {
   "name": "ReDécorAI Development",
+  // Base image with Node 20; we’ll add Python via a feature
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
-  
+
   "features": {
+    // Node is already present
     "ghcr.io/devcontainers/features/node:1": {
-      "nodeGypDependencies": true,
       "version": "20"
     },
+    // Add Python 3
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    // Git tooling
     "ghcr.io/devcontainers/features/git:1": {
       "ppa": true,
       "version": "latest"
@@ -25,7 +32,7 @@
     "vscode": {
       "extensions": [
         "bradlc.vscode-tailwindcss",
-        "esbenp.prettier-vscode", 
+        "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "ms-vscode.vscode-typescript-next",
         "formulahendry.auto-rename-tag",
@@ -36,7 +43,6 @@
         "github.copilot-chat"
       ],
       "settings": {
-        "typescript.preferences.includePackageJsonAutoImports": "on",
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.codeActionsOnSave": {
@@ -54,20 +60,23 @@
     }
   },
 
-  "forwardPorts": [5173, 3000, 8080],
+  "forwardPorts": [5173, 5001],
   "portsAttributes": {
     "5173": {
       "label": "Vite Dev Server",
       "onAutoForward": "notify"
     },
-    "3000": {
-      "label": "Alternative Dev Server", 
-      "onAutoForward": "ignore"
+    "5001": {
+      "label": "FastAPI ML Server",
+      "onAutoForward": "notify"
     }
   },
 
-  "postCreateCommand": "npm install && git lfs install",
-  "postStartCommand": "npm run dev",
+  // After container is created, install Python & Node deps
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  // When the container starts, run both servers
+  "postStartCommand": "bash .devcontainer/post-start.sh",
 
   "remoteUser": "node",
   "workspaceFolder": "/workspaces/redecorai"
